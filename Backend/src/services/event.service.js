@@ -1,11 +1,30 @@
 
 const { EventImage } = require('../models/EventImage')
 const { Event } = require('../models/Event')
+const {User}=require('../models/User')
 const AppError = require('../utils/AppError')
  // create event with out image
-exports.createEvent = async (eventData) => {
-  const { title, description, date, thumbnail } = eventData;
-  return await Event.create({ title, description, date, thumbnail });
+exports.createAdvancedEvent = async (eventData) => {
+  const { 
+    title, description, date, thumbnail,
+    limitPerPerson, limitContributors, limitTotalImages,
+    openedAt, closedAt, votingEndsAt,
+    photographerIds 
+  } = eventData;
+
+  
+  const newEvent = await Event.create({
+    title, description, date, thumbnail,
+    limitPerPerson, limitContributors, limitTotalImages,
+    openedAt, closedAt, votingEndsAt
+  });
+
+  if (photographerIds && photographerIds.length > 0) {
+    await newEvent.setPhotographers(photographerIds);
+  }
+  return await Event.findByPk(newEvent.id, {
+    include: [{ model: User, as: 'photographers', attributes: ['id', 'name', 'email'] }]
+  });
 };
 
 // add image at event
@@ -24,7 +43,7 @@ exports.getEventById = async (id) => {
       {
         model: EventImage,
         as: 'images',
-        attributes: ['id', 'url'] // Propre et performant !
+        attributes: ['id', 'url','votes'] 
       }
     ]
   });
@@ -36,14 +55,19 @@ exports.getEventById = async (id) => {
   return event;
 };
 // vote image
-exports.voteForImage = async (imageId) => {
-  const image = await EventImage.findByPk(imageId);
+exports.voteForImage = async (eventId, imageId) => {
+  const image = await EventImage.findOne({
+    where: { id: imageId, eventId: eventId }
+  });
+
   if (!image) {
-    throw new AppError('Image introuvable', 404);
+    throw new AppError("Cette image n'existe pas ou n'appartient pas à cet événement", 404);
   }
   return await image.increment('votes', { by: 1 });
 };
+//
 
+// get image winner
 exports.getEventWithWinningImage = async (eventId) => {
   const event = await Event.findByPk(eventId, {
     include: [

@@ -3,10 +3,12 @@ const eventService = require('../services/event.service')
 // create event
 exports.createEvent = async (req, res, next) => {
   try {
-    const newEvent = await eventService.createEvent(req.body);
+  
+    const newEvent = await eventService.createAdvancedEvent(req.body);
+    
     res.status(201).json({
       success: true,
-      message: "Événement créé avec succès",
+      message: "L'événement et ses règles de gestion ont été créés !",
       data: newEvent
     });
   } catch (error) {
@@ -17,8 +19,8 @@ exports.createEvent = async (req, res, next) => {
 // add image event exist
 exports.addImage = async (req, res, next) => {
   try {
-    const { id } = req.params; // L'ID de l'événement cible dans l'URL
-    const { url } = req.body;  // L'URL de l'image secondaire dans le JSON
+    const { id } = req.params; 
+    const { url } = req.body;  
     
     const newImage = await eventService.addImageToEvent(id, url);
     res.status(201).json({
@@ -43,12 +45,12 @@ exports.getAllEvents = async (req, res, next) => {
     next(error);
   }
 };
-//
+
 // Action de voter pour une image
 exports.voteImage = async (req, res, next) => {
   try {
-    const { imageId } = req.params;
-    await eventService.voteForImage(imageId);
+    const { id, imageId } = req.params; 
+    await eventService.voteForImage(id, imageId);
     
     res.status(200).json({
       success: true,
@@ -59,10 +61,10 @@ exports.voteImage = async (req, res, next) => {
   }
 };
 
-// Afficher le résultat final (L'événement + son image gagnante)
+
 exports.getWinner = async (req, res, next) => {
   try {
-    const { id } = req.params; // ID de l'événement
+    const { id } = req.params;
     const result = await eventService.getEventWithWinningImage(id);
     
     res.status(200).json({
