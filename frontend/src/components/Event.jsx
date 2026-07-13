@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createEventRequest } from '../api/events.api';
 import styles from './Event.module.css';
-
+import { createEventRequest } from '../api/events.api';
+import { getUsersRequest } from '../api/users.api';
 const initialForm = {
   title: '',
   description: '',
@@ -13,18 +13,62 @@ const initialForm = {
   openedAt: '',
   closedAt: '',
   votingEndsAt: '',
+  photographerIds: [] // Ajout du tableau pour stocker les IDs des photographes sélectionnés
 };
 
 const Event = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
+  const [users, setUsers] = useState([]); // Pour stocker la liste des élèves/utilisateurs
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  // Charger la liste des utilisateurs à la création du composant
+ useEffect(() => {
+  // Regarde bien ici : on ajoute "async" avant les parenthèses
+  const fetchUsers = async () => { 
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const response = await fetch('http://localhost:5500/api/users', {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Utilisateurs reçus :", data);
+        setUsers(Array.isArray(data) ? data : data.users || data.data || []);
+      } else {
+        console.error("Réponse serveur non-OK :", response.status);
+      }
+    } catch (err) {
+      console.error("Impossible de charger les utilisateurs :", err);
+    }
+  };
+
+  fetchUsers();
+}, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Gérer la sélection / désélection des photographes
+  const handlePhotographerToggle = (userId) => {
+    setForm((prev) => {
+      const isAlreadySelected = prev.photographerIds.includes(userId);
+      const updatedIds = isAlreadySelected
+        ? prev.photographerIds.filter((id) => id !== userId)
+        : [...prev.photographerIds, userId];
+
+      return { ...prev, photographerIds: updatedIds };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -49,7 +93,9 @@ const Event = () => {
         limitPerPerson: form.limitPerPerson ? Number(form.limitPerPerson) : 0,
         limitContributors: form.limitContributors ? Number(form.limitContributors) : 0,
         limitTotalImages: form.limitTotalImages ? Number(form.limitTotalImages) : 0,
+        // photographerIds est déjà inclus grâce au spread "...form"
       };
+      
       await createEventRequest(payload, token);
       setSuccess(true);
       setTimeout(() => navigate('/'), 1200);
@@ -74,7 +120,7 @@ const Event = () => {
           <p className={styles.eyebrow}>Nouvel événement</p>
           <h1>Donnez vie à votre événement</h1>
           <p className={styles.subtitle}>
-            Définissez les règles de contribution et de vote pour cet événement.
+            Définissez les règles de contribution, de vote et désignez vos photographes.
           </p>
         </div>
 
@@ -95,7 +141,7 @@ const Event = () => {
               type="text"
               value={form.title}
               onChange={handleChange}
-              placeholder="Ex : Mariage de Sarah & Tom"
+              placeholder="Ex : Gala de fin d'année 2026"
               required
             />
           </div>
@@ -122,6 +168,39 @@ const Event = () => {
               onChange={handleChange}
               placeholder="https://…"
             />
+          </div>
+
+          {/* Section : Désignation des photographes */}
+          <div className={styles.field}>
+            <label>Désigner les photographes de l'événement</label>
+            <p className={styles.fieldHelper} style={{ fontSize: '0.8rem', color: '#666', marginBottom: '8px' }}>
+              Sélectionnez les membres autorisés à ajouter des photos.
+            </p>
+            <div className={styles.photographersList} style={{ 
+              maxHeight: '150px', 
+              overflowY: 'auto', 
+              border: '1px solid #ccc', 
+              borderRadius: '4px', 
+              padding: '8px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+              gap: '8px'
+            }}>
+              {users.length > 0 ? (
+                users.map((user) => (
+                  <label key={user.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={form.photographerIds.includes(user.id)}
+                      onChange={() => handlePhotographerToggle(user.id)}
+                    />
+                    <span>{user.name || user.username || `User #${user.id}`}</span>
+                  </label>
+                ))
+              ) : (
+                <p style={{ fontSize: '0.85rem', color: '#999' }}>Aucun utilisateur trouvé.</p>
+              )}
+            </div>
           </div>
 
           <div className={styles.row}>

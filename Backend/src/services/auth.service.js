@@ -1,9 +1,13 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/User');
+const { User } = require('../models/User'); // Import corrigé avec un seul 'm' !
 const AppError = require('../utils/AppError'); 
 
-// function register
+/* ==========================================
+   1. AUTHENTIFICATION (Login / Register)
+   ========================================== */
+
+// Inscription
 exports.register = async (userData) => {
   const { name, email, password } = userData;
 
@@ -16,7 +20,7 @@ exports.register = async (userData) => {
   return await User.create({ name, email, password: hashedPassword });
 };
 
-// function inscriptions
+// Connexion
 exports.login = async (email, password) => {
   const user = await User.findOne({ where: { email } });
   if (!user) {
@@ -33,4 +37,50 @@ exports.login = async (email, password) => {
   );
 
   return { token, user };
+};
+
+/* ==========================================
+   2. GESTION DES UTILISATEURS (CRUD)
+   ========================================== */
+
+// Récupérer tous les utilisateurs (C'est cette fonction qui manquait à l'export !)
+exports.getAllUsers = async () => {
+  return await User.findAll({
+    attributes: { exclude: ['password'] }
+  });
+};
+
+// Récupérer un utilisateur par son ID
+exports.getUserById = async (id) => {
+  const user = await User.findByPk(id, {
+    attributes: { exclude: ['password'] }
+  });
+  if (!user) {
+    throw new AppError('Utilisateur introuvable', 404);
+  }
+  return user;
+};
+
+// Mettre à jour un utilisateur
+exports.updateUser = async (id, updateData) => {
+  const user = await User.findByPk(id);
+  if (!user) {
+    throw new AppError('Utilisateur introuvable', 404);
+  }
+
+  if (updateData.password) {
+    updateData.password = await bcrypt.hash(updateData.password, 10);
+  }
+
+  return await user.update(updateData);
+};
+
+// Supprimer un utilisateur
+exports.deleteUser = async (id) => {
+  const user = await User.findByPk(id);
+  if (!user) {
+    throw new AppError('Utilisateur introuvable', 404);
+  }
+  await user.destroy();
+  return { message: "Utilisateur supprimé avec succès" };
 };
