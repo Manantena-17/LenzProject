@@ -102,3 +102,22 @@
   color: #28a745;
   font-weight: 500;
 }
+.infoMessage {
+  padding: 12px 16px;
+  background: #e3f2fd;
+  border-left: 4px solid #2196F3;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  color: #0d47a1;
+  font-size: 14px;
+}
+
+.message {
+  padding: 12px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  color: #856404;
+  font-size: 14px;
+}

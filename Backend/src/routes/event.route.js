@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const eventController = require('../controllers/event.controller');
-
-router.post('/', eventController.createEvent);              
-router.post('/:id/images', eventController.addImage);       
-router.get('/', eventController.getAllEvents);             
-router.get('/:id', eventController.getEventById);          
-router.post('/:id/images/:imageId/vote', eventController.voteImage);
+const upload = require('../middlewares/upload.middleware');
+const auth = require('../middlewares/auth.middleware');
+router.get('/', eventController.getAllEvents);
+router.get('/:id', eventController.getEventById);
 router.get('/:id/winner', eventController.getWinner);
+router.post('/', auth, upload.single('thumbnail'), eventController.createEvent);
+router.post('/:id/images', auth, upload.single('image'), eventController.addImage);
+router.post('/:id/images/:imageId/vote', auth, eventController.voteImage);
+router.delete('/:id', auth, eventController.deleteEvent);
 module.exports = router;

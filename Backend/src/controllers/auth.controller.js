@@ -1,17 +1,15 @@
 
 const authService = require('../services/auth.service');
 
-// Inscription
 exports.register = async (req, res, next) => {
   try {
     const user = await authService.register(req.body);
     res.status(201).json({ message: "Utilisateur créé avec succès", user });
   } catch (error) {
-    next(error); // Transmet l'erreur au error.middleware
+    next(error); 
   }
 };
 
-// connexion
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;

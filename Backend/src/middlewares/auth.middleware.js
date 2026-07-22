@@ -1,18 +1,23 @@
-
 const jwt = require('jsonwebtoken');
 
-const auth = (req, res, next) => {
+module.exports = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) return res.status(401).json({ message: "Accès refusé." });
-
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: "You must be logged in to vote" });
+    }
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; 
+    const secret = process.env.JWT_SECRET || 'votre_cle_secrete_super_securisee';
+    const decoded = jwt.verify(token, secret);
+    const userId = decoded.id || decoded.userId || decoded._id || decoded.sub;
+
+    if (!userId) {
+      return res.status(401).json({ message: "You must be logged in to vote" });
+    }
+    req.user = { id: userId, email: decoded.email };
+    req.userId = userId;
     next();
   } catch (err) {
-    res.status(401).json({ message: "Token invalide." });
+    return res.status(401).json({ message: "You must be logged in to vote" });
   }
 };
-
-module.exports = auth;

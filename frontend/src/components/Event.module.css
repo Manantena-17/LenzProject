@@ -1,90 +1,121 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
 
 .container {
-  --ink: #201830;
-  --ink-soft: #6b6478;
-  --paper: #FBF9F6;
-  --surface: #FFFFFF;
-  --line: #E9E4DC;
-  --plum: #2D1B4E;
-  --orange: #FF5A1F;
-  --orange-dark: #E14710;
-  --green: #2EA05A;
+  --ink: #1B1B2F;
+  --ink-soft: #4A4A63;
+  --paper: #FBF7EF;
+  --paper-dim: #F2ECDD;
+  --amber: #F2A93B;
+  --amber-dark: #D98F1F;
+  --coral: #E85C4A;
+  --line: #E4DCC8;
 
   min-height: 100vh;
+  background: var(--paper);
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
   display: flex;
   justify-content: center;
-  padding: 56px 24px;
-  background: var(--paper);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  color: var(--ink);
-  box-sizing: border-box;
+  padding: 64px 24px 96px;
 }
 
 .formCard {
+  position: relative;
   width: 100%;
-  max-width: 640px;
-  background: var(--surface);
+  max-width: 720px;
+  background: #fff;
   border: 1px solid var(--line);
   border-radius: 24px;
-  padding: 44px 48px;
-  box-shadow: 0 24px 48px rgba(32, 24, 48, 0.06);
+  padding: 48px 48px 40px;
+  box-shadow: 0 32px 64px -32px rgba(27, 27, 47, 0.18);
 }
+
+/* clin d'œil billet : perforation en haut de la carte */
+.perforation {
+  position: absolute;
+  top: -1px;
+  left: 32px;
+  right: 32px;
+  height: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notch {
+  width: 18px;
+  height: 18px;
+  background: var(--paper);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.notchLine {
+  flex: 1;
+  border-top: 2px dashed var(--line);
+  margin: 0 10px;
+}
+
+/* ============ HEADER ============ */
 
 .formHeader {
   margin-bottom: 32px;
 }
 
 .eyebrow {
+  font-family: 'Space Mono', monospace;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--orange-dark);
-  margin: 0 0 10px;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  color: var(--coral);
+  margin-bottom: 12px;
 }
 
 .formHeader h1 {
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: 1.9rem;
+  font-family: 'Fraunces', serif;
   font-weight: 600;
-  margin: 0 0 10px;
+  font-size: 1.9rem;
+  line-height: 1.15;
+  margin-bottom: 10px;
   color: var(--ink);
 }
 
 .subtitle {
-  font-size: 0.92rem;
-  color: var(--ink-soft);
+  font-size: 0.95rem;
   line-height: 1.5;
-  margin: 0;
+  color: var(--ink-soft);
 }
 
+/* ============ BANNERS ============ */
+
 .successBanner {
-  background: rgba(46, 160, 90, 0.1);
-  color: var(--green);
-  border: 1px solid rgba(46, 160, 90, 0.3);
+  background: rgba(46, 160, 67, 0.1);
+  border: 1px solid rgba(46, 160, 67, 0.3);
+  color: #1e7a34;
+  padding: 14px 18px;
   border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .errorBanner {
-  background: rgba(225, 71, 16, 0.08);
-  color: var(--orange-dark);
-  border: 1px solid rgba(225, 71, 16, 0.25);
+  background: rgba(232, 92, 74, 0.08);
+  border: 1px solid rgba(232, 92, 74, 0.3);
+  color: var(--coral);
+  padding: 14px 18px;
   border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
+
+/* ============ FORM LAYOUT ============ */
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .row {
@@ -100,209 +131,351 @@
 }
 
 .field label {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--ink);
 }
 
-.field input,
-.field select,
+.fieldHelper {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin-top: -4px;
+}
+
+.field input[type="text"],
+.field input[type="number"],
 .field textarea {
   font-family: 'Inter', sans-serif;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   color: var(--ink);
   background: var(--paper);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 12px 14px;
   outline: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input[type="text"]:focus,
+.field input[type="number"]:focus,
+.field textarea:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px rgba(242, 169, 59, 0.18);
 }
 
 .field textarea {
   resize: vertical;
   min-height: 90px;
+  font-family: 'Inter', sans-serif;
 }
 
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
-  border-color: var(--orange);
-  background: var(--surface);
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.field input::placeholder,
-.field textarea::placeholder {
+/* ============ SEGMENTED CONTROL (cover mode) ============ */
+
+.segmentedControl {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.segmentBtn {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.segmentBtn:hover {
+  border-color: var(--ink-soft);
+}
+
+.segmentBtnActive {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+/* ============ DROPZONE ============ */
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  padding: 32px 20px;
+  border: 2px dashed var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.dropzone:hover,
+.dropzoneActive {
+  border-color: var(--amber);
+  background: rgba(242, 169, 59, 0.06);
+}
+
+.dropzoneIcon {
+  font-size: 1.6rem;
+}
+
+.dropzoneText {
+  font-size: 0.9rem;
   color: var(--ink-soft);
 }
+
+.dropzoneLink {
+  color: var(--coral);
+  font-weight: 600;
+}
+
+.dropzoneHint {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(74, 74, 99, 0.6);
+}
+
+.previewWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.previewImage {
+  max-width: 240px;
+  max-height: 150px;
+  border-radius: 12px;
+  display: block;
+  object-fit: cover;
+  border: 1px solid var(--line);
+}
+
+.removePreviewBtn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: var(--coral);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.removePreviewBtn:hover {
+  background: #d1493a;
+}
+
+/* ============ PHOTOGRAPHERS ============ */
+
+.photographersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.photographerCount {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--coral);
+  white-space: nowrap;
+}
+
+.photographerSearch {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 12px;
+  outline: none;
+  margin-bottom: 4px;
+  transition: border-color 0.15s ease;
+}
+
+.photographerSearch:focus {
+  border-color: var(--amber);
+}
+
+.photographersList {
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: var(--paper);
+}
+
+.photographerPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.photographerPill:hover {
+  border-color: var(--ink-soft);
+}
+
+.photographerPillActive {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.emptyText {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  padding: 8px 4px;
+}
+
+/* ============ DATE PICKER ============ */
+
+.datePickerWrapper {
+  display: block;
+  width: 100%;
+}
+
+.datePickerWrapper :global(.react-datepicker-wrapper) {
+  width: 100%;
+}
+
+.datePickerWrapper :global(.react-datepicker__input-container input) {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.datePickerWrapper :global(.react-datepicker__input-container input:focus) {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px rgba(242, 169, 59, 0.18);
+}
+
+:global(.react-datepicker) {
+  font-family: 'Inter', sans-serif;
+  border: 1px solid #E4DCC8;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+:global(.react-datepicker__header) {
+  background: #1B1B2F;
+  border-bottom: none;
+  padding-top: 14px;
+}
+
+:global(.react-datepicker__current-month),
+:global(.react-datepicker-time__header) {
+  color: #FBF7EF;
+  font-weight: 600;
+}
+
+:global(.react-datepicker__day-name) {
+  color: rgba(251, 247, 239, 0.6);
+}
+
+:global(.react-datepicker__day--selected),
+:global(.react-datepicker__day--keyboard-selected) {
+  background: #F2A93B;
+  color: #1B1B2F;
+  font-weight: 600;
+}
+
+:global(.react-datepicker__day:hover) {
+  background: rgba(242, 169, 59, 0.25);
+}
+
+:global(.react-datepicker__time-list-item--selected) {
+  background: #F2A93B !important;
+  color: #1B1B2F !important;
+}
+
+/* ============ ACTIONS ============ */
 
 .actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 14px;
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--line);
 }
 
 .cancelBtn {
-  background: transparent;
-  border: 1px solid var(--line);
-  color: var(--ink-soft);
+  padding: 13px 24px;
   border-radius: 999px;
-  padding: 12px 22px;
-  font-size: 0.9rem;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink-soft);
   font-weight: 600;
+  font-size: 0.92rem;
   cursor: pointer;
   transition: border-color 0.15s ease, color 0.15s ease;
 }
 
 .cancelBtn:hover {
-  border-color: var(--ink-soft);
+  border-color: var(--ink);
   color: var(--ink);
 }
 
 .submitBtn {
-  background: var(--orange);
-  color: #fff;
-  border: none;
+  padding: 13px 28px;
   border-radius: 999px;
-  padding: 12px 26px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.submitBtn:hover:not(:disabled) {
-  background: var(--orange-dark);
-  transform: translateY(-1px);
-}
-
-.submitBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-@media (max-width: 560px) {
-  .formCard {
-    padding: 32px 24px;
-  }
-
-  .row {
-    grid-template-columns: 1fr;
-  }
-
-  .actions {
-    flex-direction: column-reverse;
-  }
-
-  .cancelBtn,
-  .submitBtn {
-    width: 100%;
-    text-align: center;
-  }
-}
-/* src/components/Event.module.css */
-
-/* ... tes styles existants (container, formCard, etc.) ... */
-
-/* Encapsuleur pour le champ de l'image de couverture */
-.fieldFullWidth {
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Label spécifique pour l'image */
-.fieldFullWidth label {
-  display: block;
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #1e293b;
-  margin-bottom: 8px;
-}
-
-/* Texte d'aide optionnel sous le label */
-.fieldHelper {
-  font-size: 0.8rem;
-  color: #64748b;
-  margin-top: -6px;
-  margin-bottom: 12px;
-  display: block;
-}
-
-/* --- Ajustements pour le reste du formulaire --- */
-
-/* Conteneur pour les lignes à deux colonnes (dates, limites) */
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 4px; /* Ajustement pour compenser le margin-bottom des fields */
-}
-
-/* Responsive pour les petits écrans : passe en une seule colonne */
-@media (max_value: 640px) {
-  .row {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-}
-
-/* Style de base pour un champ standard (input, textarea) */
-.field {
-  margin-bottom: 20px;
-}
-
-.field label {
-  display: block;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #334155;
-  margin-bottom: 6px;
-}
-
-.field input[type="text"],
-.field input[type="number"],
-.field input[type="datetime-local"],
-.field textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  transition: border-color 0.15s ease;
-}
-
-.field input:focus,
-.field textarea:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* Zone des boutons d'action */
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 32px;
-  padding-top: 20px;
-  border-top: 1px solid #e2e8f0;
-}
-
-.submitBtn {
-  background-color: #3b82f6;
-  color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  background: var(--ink);
+  color: var(--paper);
   font-weight: 600;
+  font-size: 0.92rem;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .submitBtn:hover:not(:disabled) {
-  background-color: #2563eb;
+  transform: translateY(-2px);
 }
 
 .submitBtn:disabled {
@@ -310,17 +483,18 @@
   cursor: not-allowed;
 }
 
-.cancelBtn {
-  background-color: white;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
+/* ============ RESPONSIVE ============ */
+
+@media (max-width: 640px) {
+  .container { padding: 32px 16px 64px; }
+  .formCard { padding: 36px 24px 28px; }
+  .row { grid-template-columns: 1fr; }
+  .actions { flex-direction: column-reverse; }
+  .cancelBtn, .submitBtn { width: 100%; }
 }
 
-.cancelBtn:hover {
-  background-color: #f1f5f9;
-  color: #334155;
+@media (prefers-reduced-motion: reduce) {
+  .submitBtn, .segmentBtn, .dropzone, .photographerPill {
+    transition: none;
+  }
 }

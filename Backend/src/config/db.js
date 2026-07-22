@@ -1,6 +1,6 @@
 // src/config/db.js
 const { Sequelize } = require('sequelize');
-require('dotenv').config(); // Pour charger les variables d'environnement
+require('dotenv').config(); 
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
   }
 );
 
-// test connexion
+
 async function testConnection() {
   try {
     await sequelize.authenticate();
@@ -25,4 +25,4 @@ async function testConnection() {
 
 testConnection();
 
-module.exports = sequelize;
+module.exports = { sequelize };

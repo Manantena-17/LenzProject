@@ -1,13 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/User'); // Import corrigé avec un seul 'm' !
+const { User } = require('../models');
 const AppError = require('../utils/AppError'); 
+const JWT_SECRET = process.env.JWT_SECRET || 'votre_cle_secrete_super_securisee';
 
-/* ==========================================
-   1. AUTHENTIFICATION (Login / Register)
-   ========================================== */
-
-// Inscription
 exports.register = async (userData) => {
   const { name, email, password } = userData;
 
@@ -20,7 +16,7 @@ exports.register = async (userData) => {
   return await User.create({ name, email, password: hashedPassword });
 };
 
-// Connexion
+
 exports.login = async (email, password) => {
   const user = await User.findOne({ where: { email } });
   if (!user) {
@@ -30,27 +26,23 @@ exports.login = async (email, password) => {
   if (!isMatch) {
     throw new AppError('Identifiants invalides', 401);
   }
+
   const token = jwt.sign(
     { id: user.id, email: user.email }, 
-    process.env.JWT_SECRET, 
+    JWT_SECRET, 
     { expiresIn: '24h' }
   );
 
   return { token, user };
 };
 
-/* ==========================================
-   2. GESTION DES UTILISATEURS (CRUD)
-   ========================================== */
 
-// Récupérer tous les utilisateurs (C'est cette fonction qui manquait à l'export !)
 exports.getAllUsers = async () => {
   return await User.findAll({
     attributes: { exclude: ['password'] }
   });
 };
 
-// Récupérer un utilisateur par son ID
 exports.getUserById = async (id) => {
   const user = await User.findByPk(id, {
     attributes: { exclude: ['password'] }
@@ -61,7 +53,7 @@ exports.getUserById = async (id) => {
   return user;
 };
 
-// Mettre à jour un utilisateur
+
 exports.updateUser = async (id, updateData) => {
   const user = await User.findByPk(id);
   if (!user) {
@@ -75,7 +67,6 @@ exports.updateUser = async (id, updateData) => {
   return await user.update(updateData);
 };
 
-// Supprimer un utilisateur
 exports.deleteUser = async (id) => {
   const user = await User.findByPk(id);
   if (!user) {

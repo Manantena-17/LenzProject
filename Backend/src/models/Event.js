@@ -1,6 +1,6 @@
 
-const { DataTypes } = require('sequelize')
-const sequelize = require('../config/db')
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
 
 const Event = sequelize.define('Event', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -19,4 +19,4 @@ const Event = sequelize.define('Event', {
   timestamps: true
 });
 
-module.exports = { Event };
+module.exports = Event;

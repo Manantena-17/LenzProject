@@ -1,7 +1,7 @@
 
 
 import { useState } from 'react';
-import { loginRequest } from '../api/auth.api';
+import { loginRequest, registerRequest } from '../api/auth.api';
 export const useAuth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -25,5 +25,29 @@ export const useAuth = () => {
       setLoading(false);
     }
   };
-  return { login, loading, error, success };
+
+  const register = async (name, email, password) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      const data = await registerRequest(name, email, password);
+
+      // Si le backend connecte automatiquement l'utilisateur après inscription
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+
+      setSuccess(true);
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { login, register, loading, error, success };
 };
