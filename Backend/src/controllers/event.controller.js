@@ -50,15 +50,21 @@ exports.createEvent = async (req, res, next) => {
 exports.addImage = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const userId = req.user ? req.user.id : req.userId;
+
+    if (!userId) {
+      throw new AppError('Vous devez être connecté pour ajouter une photo.', 401);
+    }
+
     let imageUrl = req.body.url;
     if (req.file) {
       imageUrl = `/uploads/events/${req.file.filename}`;
     }
-
     if (!imageUrl) {
       throw new AppError("Veuillez fournir une image (fichier ou URL valide).", 400);
     }
-    const newImage = await eventService.addImageToEvent(id, imageUrl);
+
+    const newImage = await eventService.addImageToEvent(id, imageUrl, userId);
 
     res.status(201).json({
       success: true,

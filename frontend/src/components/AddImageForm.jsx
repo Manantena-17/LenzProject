@@ -10,22 +10,22 @@ const AddImageForm = ({ eventId, onImageAdded }) => {
     if (!selectedFile) return;
 
     try {
-      // Envoi au backend via l'API
+
       const response = await uploadImageRequest(eventId, selectedFile);
       
-      // On ajoute l'image à la galerie React
+    
       if (onImageAdded) onImageAdded(response.data);
       
-      setSelectedFile(null); // On vide l'uploader après succès
-    } catch (error) {
-      console.error("Erreur lors de l'envoi de l'image :", error);
-      alert("Erreur lors de l'envoi");
-    }
+      setSelectedFile(null); 
+   } catch (error) {
+  console.error("Erreur lors de l'envoi de l'image :", error);
+  alert(error.response?.data?.message || "Erreur lors de l'envoi");
+}
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* TON UPLOADER EST UTILISÉ ICI */}
+
       <ImageUploader 
         onImageSelected={(file) => setSelectedFile(file)} 
         key={selectedFile ? 'filled' : 'empty'} 

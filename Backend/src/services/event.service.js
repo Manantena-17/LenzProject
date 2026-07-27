@@ -24,15 +24,37 @@ exports.createAdvancedEvent = async (eventData) => {
     include: [{ model: User, as: 'photographers', attributes: ['id', 'name', 'email'] }]
   });
 };
-
-exports.addImageToEvent = async (eventId, imageUrl) => {
+exports.addImageToEvent = async (eventId, imageUrl, userId) => {
   const event = await Event.findByPk(eventId);
   if (!event) {
     throw new AppError('Event not found', 404);
   }
-  return await EventImage.create({ url: imageUrl, eventId, votes: 0 });
-};
+  if (event.limitTotalImages > 0) {
+    const totalImages = await EventImage.count({ where: { eventId } });
+    if (totalImages >= event.limitTotalImages) {
+      throw new AppError('Le nombre maximum de photos pour cet événement est atteint.', 403);
+    }
+  }
 
+
+  if (event.limitPerPerson > 0) {
+    const userImagesCount = await EventImage.count({ where: { eventId, userId } });
+    if (userImagesCount >= event.limitPerPerson) {
+      throw new AppError('Vous avez atteint votre limite de photos pour cet événement.', 403);
+    }
+  }
+
+  if (event.limitContributors > 0) {
+    const distinctContributors = await EventImage.aggregate('userId', 'DISTINCT', { plain: false, where: { eventId } });
+    const distinctIds = distinctContributors.map(r => r.DISTINCT);
+    const isNewContributor = !distinctIds.includes(userId);
+    if (isNewContributor && distinctIds.length >= event.limitContributors) {
+      throw new AppError('Le nombre maximum de contributeurs pour cet événement est atteint.', 403);
+    }
+  }
+
+  return await EventImage.create({ url: imageUrl, eventId, userId, votes: 0 });
+};
 
 exports.getEventById = async (id) => {
   const event = await Event.findByPk(id, {

@@ -7,6 +7,10 @@ const EventImage = sequelize.define('EventImage', {
     primaryKey: true,
     autoIncrement: true
   },
+  userId: {
+     type: DataTypes.INTEGER,
+      allowNull: false 
+    },
   url: {
     type: DataTypes.STRING,
     allowNull: false

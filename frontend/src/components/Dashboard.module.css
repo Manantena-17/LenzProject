@@ -41,6 +41,24 @@ html, body {
   overflow-x: hidden;
 }
 
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 /* ============ HEADER ============ */
 
 .navbar {
@@ -75,6 +93,12 @@ html, body {
 .logoMark {
   font-size: 1.5rem;
   transform: rotate(-8deg);
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover .logoMark {
+  transform: rotate(4deg) scale(1.1);
 }
 
 .searchBar {
@@ -195,12 +219,13 @@ html, body {
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ctaBtn:hover {
   background: #ffc266;
   transform: translateY(-1px);
+  box-shadow: 0 10px 24px -10px rgba(242, 169, 59, 0.6);
 }
 
 /* ============ HERO ============ */
@@ -212,16 +237,40 @@ html, body {
 }
 
 .hero {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 56px;
   margin-bottom: 80px;
+  padding: 48px;
+  border-radius: 28px;
+  overflow: hidden;
+  background-color: var(--paper-dim);
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(242, 169, 59, 0.16), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(74, 124, 232, 0.12), transparent 50%),
+    url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1600&q=60');
+  background-size: cover;
+  background-position: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, var(--paper) 32%, rgba(251, 247, 239, 0.88) 55%, rgba(251, 247, 239, 0.55) 100%);
+}
+
+.heroText, .heroTicket {
+  position: relative;
+  z-index: 1;
 }
 
 .heroText {
   flex: 1;
   min-width: 0;
+  animation: fadeInUp 0.6s ease backwards;
 }
 
 .heroEyebrow {
@@ -265,15 +314,17 @@ html, body {
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .heroPrimaryBtn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 16px 32px -14px rgba(27, 27, 47, 0.5);
 }
 
 .heroGhostBtn {
-  background: none;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(6px);
   border: 1px solid var(--line);
   color: var(--ink);
   border-radius: 999px;
@@ -281,15 +332,17 @@ html, body {
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .heroGhostBtn:hover {
   border-color: var(--ink);
+  transform: translateY(-2px);
 }
 
 .heroTicket {
   flex-shrink: 0;
+  animation: fadeInUp 0.7s ease 0.1s backwards;
 }
 
 .ticketStub {
@@ -300,6 +353,17 @@ html, body {
   overflow: hidden;
   box-shadow: 0 24px 48px -20px rgba(27, 27, 47, 0.5);
   transform: rotate(3deg);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  animation: floatTicket 4s ease-in-out infinite;
+}
+
+@keyframes floatTicket {
+  0%, 100% { transform: rotate(3deg) translateY(0); }
+  50% { transform: rotate(1deg) translateY(-8px); }
+}
+
+.ticketStub:hover {
+  box-shadow: 0 32px 60px -20px rgba(27, 27, 47, 0.6);
 }
 
 .ticketTop {
@@ -415,12 +479,13 @@ html, body {
   color: var(--paper);
   font-size: 1rem;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
 }
 
 .recentArrow:hover {
   border-color: var(--amber);
   background: rgba(251, 247, 239, 0.12);
+  transform: scale(1.08);
 }
 
 .recentCard {
@@ -435,12 +500,12 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  animation: fadeSlide 0.35s ease;
+  animation: fadeSlide 0.4s ease;
 }
 
 @keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .recentImageWrapper {
@@ -473,6 +538,11 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.recentCard:hover .recentImage {
+  transform: scale(1.06);
 }
 
 .recentCardTitle {
@@ -549,6 +619,7 @@ html, body {
   padding: 64px 24px;
   color: var(--ink-soft);
   text-align: center;
+  animation: fadeIn 0.3s ease;
 }
 
 .spinner {
@@ -593,12 +664,20 @@ html, body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: fadeInUp 0.5s ease backwards;
 }
 
+.grid .eventCard:nth-child(1) { animation-delay: 0.02s; }
+.grid .eventCard:nth-child(2) { animation-delay: 0.06s; }
+.grid .eventCard:nth-child(3) { animation-delay: 0.1s; }
+.grid .eventCard:nth-child(4) { animation-delay: 0.14s; }
+.grid .eventCard:nth-child(5) { animation-delay: 0.18s; }
+.grid .eventCard:nth-child(6) { animation-delay: 0.22s; }
+
 .eventCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px -24px rgba(27, 27, 47, 0.35);
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px -24px rgba(27, 27, 47, 0.4);
 }
 
 .cardImageWrapper {
@@ -612,6 +691,11 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.eventCard:hover .cardImage {
+  transform: scale(1.08);
 }
 
 /* Statut calculé automatiquement à partir des dates de l'événement */
@@ -634,6 +718,7 @@ html, body {
 .badgeActive {
   background: var(--amber);
   color: var(--ink);
+  animation: pulse 2.4s ease-in-out infinite;
 }
 
 /* À venir (date future) */
@@ -862,7 +947,7 @@ html, body {
   .recentHeader { padding: 0 24px 16px; }
   .recentCarousel { padding: 4px 24px 8px; gap: 12px; }
   .recentCard { max-width: 220px; }
-  .hero { flex-direction: column; align-items: flex-start; }
+  .hero { flex-direction: column; align-items: flex-start; padding: 32px; }
   .heroTicket { align-self: center; }
   .grid { grid-template-columns: repeat(2, 1fr); }
   .footerTop { flex-direction: column; align-items: flex-start; gap: 32px; padding: 40px 24px 32px; }
@@ -964,7 +1049,7 @@ html, body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .eventCard, .ctaBtn, .heroPrimaryBtn, .viewBtn, .spinner {
+  .eventCard, .ctaBtn, .heroPrimaryBtn, .viewBtn, .spinner, .ticketStub, .liveDot, .badgeActive {
     transition: none;
     animation: none;
   }

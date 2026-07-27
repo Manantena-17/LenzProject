@@ -22,18 +22,27 @@ const handleImageError = (e) => {
   e.target.src = PLACEHOLDER_IMAGE;
 };
 
-const getRatedMap = () => {
+// --- FIX: le suivi des votes déjà faits doit être propre à CHAQUE utilisateur,
+// pas partagé par tout le navigateur. On dérive une clé de storage à partir
+// de l'utilisateur connecté (ou "anonymous" si personne n'est connecté).
+const getRatedStorageKey = (user) => {
+  const uid = user?.id || user?._id || user?.email;
+  return uid ? `${RATED_KEY}_${uid}` : `${RATED_KEY}_anonymous`;
+};
+
+const getRatedMap = (user) => {
   try {
-    return JSON.parse(localStorage.getItem(RATED_KEY)) || {};
+    return JSON.parse(localStorage.getItem(getRatedStorageKey(user))) || {};
   } catch {
     return {};
   }
 };
 
-const markAsRated = (imageId, stars) => {
-  const current = getRatedMap();
+const markAsRated = (user, imageId, stars) => {
+  const key = getRatedStorageKey(user);
+  const current = getRatedMap(user);
   current[imageId] = stars;
-  localStorage.setItem(RATED_KEY, JSON.stringify(current));
+  localStorage.setItem(key, JSON.stringify(current));
 };
 
 const getStoredUser = () => {
@@ -116,14 +125,15 @@ const ImageGalleryEvent = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [ratedMap, setRatedMap] = useState(getRatedMap());
+  const [currentUser, setCurrentUser] = useState(getStoredUser());
+  // FIX: on initialise ratedMap avec la clé propre à l'utilisateur courant
+  const [ratedMap, setRatedMap] = useState(() => getRatedMap(getStoredUser()));
   const [votingId, setVotingId] = useState(null);
   const [sortMode, setSortMode] = useState('recent');
   const [viewMode, setViewMode] = useState('gallery');
   const [activeImageId, setActiveImageId] = useState(null); // Fix Bug 1: Utilisation de l'ID au lieu de l'index
   const [notification, setNotification] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentUser, setCurrentUser] = useState(getStoredUser());
 
   const isLoggedIn = !!currentUser;
 
@@ -131,15 +141,22 @@ const ImageGalleryEvent = () => {
   const lastFocusedRef = useRef(null);
   const notificationTimerRef = useRef(null);
 
+  // FIX: dès que l'utilisateur connecté change (connexion, déconnexion, changement
+  // de compte), on recharge le ratedMap correspondant à CE user, pas celui du précédent.
+  useEffect(() => {
+    setRatedMap(getRatedMap(currentUser));
+  }, [currentUser]);
+
   useEffect(() => {
     const syncRatedMap = (e) => {
-      if (e.key === RATED_KEY) {
-        setRatedMap(getRatedMap());
+      // FIX: on ne réagit qu'aux changements de la clé de l'utilisateur courant
+      if (e.key === getRatedStorageKey(currentUser)) {
+        setRatedMap(getRatedMap(currentUser));
       }
     };
     window.addEventListener('storage', syncRatedMap);
     return () => window.removeEventListener('storage', syncRatedMap);
-  }, []);
+  }, [currentUser]);
 
   const showNotification = useCallback((message, type = 'success') => {
     if (notificationTimerRef.current) {
@@ -218,7 +235,6 @@ const ImageGalleryEvent = () => {
     return [...imagesToSort].sort((a, b) => getImageDate(b) - getImageDate(a));
   }, [filteredImages, sortMode]);
 
-  // Index calculé à la volée pour la navigation par flèches dans la lightbox
   const lightboxIndex = useMemo(() => {
     if (!activeImageId) return null;
     const idx = displayedImages.findIndex(img => img.id === activeImageId);
@@ -271,7 +287,8 @@ const ImageGalleryEvent = () => {
         })
       );
 
-      markAsRated(imageId, stars);
+      // FIX: on marque le vote comme fait POUR CET UTILISATEUR uniquement
+      markAsRated(currentUser, imageId, stars);
       setRatedMap((prev) => ({ ...prev, [imageId]: stars }));
       showNotification(`⭐ Vote de ${stars} étoile${stars > 1 ? 's' : ''} enregistré !`, 'success');
     } catch (err) {
@@ -280,7 +297,7 @@ const ImageGalleryEvent = () => {
     } finally {
       setVotingId(null);
     }
-  }, [id, ratedMap, votingId, votingOpen, showNotification, isLoggedIn, navigate]);
+  }, [id, ratedMap, votingId, votingOpen, showNotification, isLoggedIn, navigate, currentUser]);
 
   const openLightbox = (image, triggerEl) => {
     lastFocusedRef.current = triggerEl || document.activeElement;
