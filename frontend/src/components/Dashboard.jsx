@@ -258,10 +258,6 @@ const Dashboard = () => {
         <section className={styles.recentStrip} aria-label="Événements récemment ajoutés">
           <div className={styles.recentHeader}>
             <span className={styles.recentTitle}>Récemment ajouté</span>
-            <span className={styles.liveIndicator}>
-              <span className={styles.liveDot} aria-hidden="true" />
-              Actualisé toutes les 10s
-            </span>
           </div>
 
           <div className={styles.recentCarousel}>
@@ -274,7 +270,7 @@ const Dashboard = () => {
               }
               aria-label="Événement précédent"
             >
-              ←
+              
             </button>
 
             {(() => {
@@ -310,7 +306,7 @@ const Dashboard = () => {
               onClick={() => setRecentIndex((prev) => (prev + 1) % recentEvents.length)}
               aria-label="Événement suivant"
             >
-              →
+              
             </button>
           </div>
 

@@ -149,7 +149,7 @@ const Help = () => {
             ✉ contact@lenz.app
           </a>
           <a className={styles.contactBtnGhost} href="tel:0346505549">
-            ☎ 03 46 50 55 49
+            ☎ 034 65 055 49
           </a>
         </div>
       </section>
